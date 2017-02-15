@@ -1,0 +1,18 @@
+{
+    "name": "descent/dependency-injection",
+    "description": "Descent Framework Dependency Injection Component",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Matthias Kaschubowski",
+            "email": "nihylum@gmail.com"
+        }
+    ],
+    "require": {},
+    "autoload": {
+        "psr-4": {
+            "Descent\\Services\\": "./src"
+        }
+    }
+}
