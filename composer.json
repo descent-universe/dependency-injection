@@ -10,7 +10,8 @@
         }
     ],
     "require": {
-        "descent/contracts": "~1.0"
+        "descent/contracts": "~1.0",
+        "descent/universe": "~1.0"
     },
     "autoload": {
         "psr-4": {

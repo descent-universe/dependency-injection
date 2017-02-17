@@ -11,7 +11,29 @@
 namespace Descent\Services\Entities;
 
 
-class Factory
+use Descent\Services\Exceptions\ServiceException;
+
+/**
+ * Class Factory
+ * @package Descent\Services\Entities
+ */
+class Factory extends AbstractService
 {
+    /**
+     * Dispatches the provided concrete.
+     *
+     * @param $concrete
+     * @return string|callable
+     */
+    protected function dispatchConcrete($concrete)
+    {
+        if ( ! is_callable($concrete) ) {
+            throw new ServiceException(
+                'A factory concrete must be a callable'
+            );
+        }
+
+        return $concrete;
+    }
 
 }

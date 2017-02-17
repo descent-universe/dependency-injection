@@ -14,15 +14,35 @@ namespace Descent\Services\Entities;
 use Descent\Services\Exceptions\ServiceException;
 
 /**
- * Class ProtectedService
+ * Class AbstractService
  * @package Descent\Services\Entities
  */
-final class ProtectedService implements ServiceInterface
+abstract class AbstractService implements ServiceInterface
 {
     /**
-     * @var ServiceInterface
+     * @var string
      */
-    private $service;
+    private $interface;
+
+    /**
+     * @var callable|string
+     */
+    private $concrete;
+
+    /**
+     * @var bool
+     */
+    private $isSingleton = false;
+
+    /**
+     * @var array
+     */
+    private $parameterBindings = [];
+
+    /**
+     * @var string[]
+     */
+    private $enforcedParameters = [];
 
     /**
      * @var object|null
@@ -30,16 +50,14 @@ final class ProtectedService implements ServiceInterface
     private $instance;
 
     /**
-     * ProtectedService constructor.
-     * @param ServiceInterface $service
+     * AbstractService constructor.
+     * @param string $interface
+     * @param $concrete
      */
-    public function __construct(ServiceInterface $service)
+    final public function __construct(string $interface, $concrete)
     {
-        $this->service = $service;
-
-        if ( $service->hasInstance() ) {
-            $this->instance = $service->getInstance();
-        }
+        $this->interface = $interface;
+        $this->concrete = $this->dispatchConcrete($concrete);
     }
 
     /**
@@ -47,9 +65,9 @@ final class ProtectedService implements ServiceInterface
      *
      * @return string
      */
-    public function getInterface(): string
+    final public function getInterface(): string
     {
-        return $this->service->getInterface();
+        return $this->interface;
     }
 
     /**
@@ -57,9 +75,9 @@ final class ProtectedService implements ServiceInterface
      *
      * @return string|\Closure
      */
-    public function getConcrete()
+    final public function getConcrete()
     {
-        return $this->service->getConcrete();
+        return $this->concrete;
     }
 
     /**
@@ -68,11 +86,11 @@ final class ProtectedService implements ServiceInterface
      * @param bool $flag
      * @return ServiceInterface
      */
-    public function singleton(bool $flag = true): ServiceInterface
+    final public function singleton(bool $flag = true): ServiceInterface
     {
-        throw new ServiceException(
-            'You can not modify a protected service'
-        );
+        $this->isSingleton = $flag;
+
+        return $this;
     }
 
     /**
@@ -80,9 +98,9 @@ final class ProtectedService implements ServiceInterface
      *
      * @return bool
      */
-    public function isSingleton(): bool
+    final public function isSingleton(): bool
     {
-        return $this->service->isSingleton();
+        return $this->isSingleton;
     }
 
     /**
@@ -91,11 +109,11 @@ final class ProtectedService implements ServiceInterface
      * @param array $parameters
      * @return ServiceInterface
      */
-    public function withParameters(array $parameters): ServiceInterface
+    final public function withParameters(array $parameters): ServiceInterface
     {
-        throw new ServiceException(
-            'You can not modify a protected service'
-        );
+        $this->parameterBindings = $parameters;
+
+        return $this;
     }
 
     /**
@@ -103,9 +121,9 @@ final class ProtectedService implements ServiceInterface
      *
      * @return array
      */
-    public function getParameters(): array
+    final public function getParameters(): array
     {
-        return $this->service->getParameters();
+        return $this->parameterBindings;
     }
 
     /**
@@ -114,11 +132,11 @@ final class ProtectedService implements ServiceInterface
      * @param \string[] ...$parameters
      * @return ServiceInterface
      */
-    public function enforceParameters(string ... $parameters): ServiceInterface
+    final public function enforceParameters(string ... $parameters): ServiceInterface
     {
-        throw new ServiceException(
-            'You can not modify a protected service'
-        );
+        $this->enforcedParameters = $parameters;
+
+        return $this;
     }
 
     /**
@@ -126,9 +144,9 @@ final class ProtectedService implements ServiceInterface
      *
      * @return string[]
      */
-    public function getEnforcedParameters(): array
+    final public function getEnforcedParameters(): array
     {
-        return $this->service->getEnforcedParameters();
+        return $this->enforcedParameters;
     }
 
     /**
@@ -138,9 +156,9 @@ final class ProtectedService implements ServiceInterface
      * @throws ServiceException when service does not result into a singleton
      * @return object
      */
-    public function getInstance()
+    final public function getInstance()
     {
-        if ( ! $this->isSingleton() ) {
+        if ( ! $this->isSingleton ) {
             throw new ServiceException(
                 'This service can not hold an instance, the service is not defined as singleton'
             );
@@ -160,9 +178,9 @@ final class ProtectedService implements ServiceInterface
      *
      * @return bool
      */
-    public function hasInstance(): bool
+    final public function hasInstance(): bool
     {
-        return $this->isSingleton() && is_object($this->instance);
+        return $this->isSingleton && is_object($this->instance);
     }
 
     /**
@@ -173,15 +191,15 @@ final class ProtectedService implements ServiceInterface
      * @throws ServiceException when the provided object does not implement the serviced interface
      * @return ServiceInterface
      */
-    public function withInstance($object): ServiceInterface
+    final public function withInstance($object): ServiceInterface
     {
-        if ( ! $this->isSingleton() ) {
+        if ( ! $this->isSingleton ) {
             throw new ServiceException(
                 'This service can not hold an instance, the service is not defined as singleton'
             );
         }
 
-        if ( ! is_a($object, $this->getInterface()) ) {
+        if ( ! is_a($object, $this->interface) ) {
             throw new ServiceException(
                 'The provided object does not implement the interface of this service'
             );
@@ -192,4 +210,11 @@ final class ProtectedService implements ServiceInterface
         return $this;
     }
 
+    /**
+     * Dispatches the provided concrete.
+     *
+     * @param $concrete
+     * @return string|callable
+     */
+    abstract protected function dispatchConcrete($concrete);
 }
