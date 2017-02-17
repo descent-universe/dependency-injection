@@ -32,7 +32,7 @@ class DependencyInjectionContainer extends DependencyBuilder implements ServiceC
      * @throws ServiceContainerExceptionInterface
      * @return ServiceInterface
      */
-    public function get(string $interface): ServiceInterface
+    public function get($interface)
     {
         if ( ! $this->has($interface) ) {
             throw new ServiceContainerException('Unknown interface: '.$interface);
@@ -44,13 +44,16 @@ class DependencyInjectionContainer extends DependencyBuilder implements ServiceC
     /**
      * checks whether the given interfaces are known to the container or not.
      *
-     * @param \string[] ...$interface
+     * @param string $interface
+     * @param string[] ...$interfaces
      * @return bool
      */
-    public function has(string ... $interface): bool
+    public function has($interface, string ... $interfaces): bool
     {
-        foreach ( $interface as $current ) {
-            if ( ! array_key_exists($this->marshalKey($interface), $this->services) ) {
+        array_unshift($interfaces, $interface);
+
+        foreach ( $interfaces as $current ) {
+            if ( ! array_key_exists($this->marshalKey($current), $this->services) ) {
                 return false;
             }
         }

@@ -27,15 +27,16 @@ interface ContainerInterface
      * @throws ServiceContainerExceptionInterface
      * @return ServiceInterface
      */
-    public function get(string $interface): ServiceInterface;
+    public function get($interface): ServiceInterface;
 
     /**
      * checks whether the given interfaces are known to the container or not.
      *
-     * @param \string[] ...$interface
+     * @param string $interface
+     * @param string[] ...$interfaces
      * @return bool
      */
-    public function has(string ... $interface): bool;
+    public function has($interface, string ... $interfaces);
 
     /**
      * binds a given interface to a optionally provided concrete. If no concrete is provided, the provided interface
