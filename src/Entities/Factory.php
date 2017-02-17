@@ -33,7 +33,7 @@ class Factory extends AbstractService
             );
         }
 
-        return $concrete;
+        return encloseCallback($concrete);
     }
 
 }

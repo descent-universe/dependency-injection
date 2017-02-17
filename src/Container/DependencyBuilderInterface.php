@@ -11,6 +11,8 @@
 namespace Descent\Services\Container;
 
 
+use Descent\Services\Entities\ServiceInterface;
+
 /**
  * Interface DependencyBuilderInterface
  * @package Descent\Services\Container
@@ -38,4 +40,15 @@ interface DependencyBuilderInterface
      * @return mixed
      */
     public function call(callable $callback, array $parameters = [], string ... $enforcedOptionalParameters);
+
+    /**
+     * incubates the provided service. Optional $parameters content supersedes assigned or incubated parameters.
+     * Optionally enforces the provided optional parameter names.
+     *
+     * @param ServiceInterface $service
+     * @param array $parameters
+     * @param \string[] ...$enforcedOptionalParameters
+     * @return object
+     */
+    public function build(ServiceInterface $service, array $parameters = [], string ... $enforcedOptionalParameters);
 }

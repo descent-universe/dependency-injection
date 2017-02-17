@@ -11,9 +11,7 @@
 namespace Descent\Services\Exceptions;
 
 
-use LogicException;
-
-class ServiceException extends LogicException
+class DependencyBuilderException extends \LogicException
 {
 
 }
