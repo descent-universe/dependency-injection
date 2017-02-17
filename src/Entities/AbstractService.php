@@ -54,10 +54,10 @@ abstract class AbstractService implements ServiceInterface
      * @param string $interface
      * @param $concrete
      */
-    final public function __construct(string $interface, $concrete)
+    final public function __construct(string $interface, $concrete = null)
     {
         $this->interface = $interface;
-        $this->concrete = $this->dispatchConcrete($concrete);
+        $this->concrete = $this->dispatchConcrete($concrete ?? $interface);
     }
 
     /**
