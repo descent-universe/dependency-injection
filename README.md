@@ -20,8 +20,11 @@ use Descent\Services\{
 $builder = new DependencyBuilder();
 $factory = new Factory(
     DateTimeInterface::class, 
-    function(string $time, string $zone = 'europe/berlin') {
-        return new DateTime($time, new DateTimeZone($zone);
+    function(string $time, string $zone = null) {
+        return new DateTime(
+            $time, 
+            new DateTimeZone($zone ?? 'europe/berlin')
+        );
     }
 );
 
