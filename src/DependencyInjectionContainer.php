@@ -161,11 +161,7 @@ class DependencyInjectionContainer extends DependencyBuilder implements ServiceC
      */
     protected function resolveInterface(string $interface): ServiceInterface
     {
-        if ( $this->has($interface) ) {
-            return $this->get($interface);
-        }
-
-        return parent::resolveInterface($interface);
+        return $this->services[$this->marshalKey($interface)] ?? parent::resolveInterface($interface);
     }
 
     /**
